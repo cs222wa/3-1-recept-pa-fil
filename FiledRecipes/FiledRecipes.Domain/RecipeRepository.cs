@@ -129,8 +129,25 @@ namespace FiledRecipes.Domain
         }
 
         public virtual void Load()
-        { 
+        {
+            //List<string> loadRecipes = new List<string>();
 
+            try
+            {
+                using (StreamReader reader = new StreamReader("App_Data\\Recipes.txt"))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        //loadRecipes.Add(line);
+                        Console.WriteLine(line);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public virtual void Save()
