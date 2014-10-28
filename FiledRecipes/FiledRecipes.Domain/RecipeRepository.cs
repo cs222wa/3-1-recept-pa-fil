@@ -127,5 +127,15 @@ namespace FiledRecipes.Domain
                 handler(this, e);
             }
         }
+
+        public virtual void Load()
+        { 
+
+        }
+
+        public virtual void Save()
+        {
+
+        }
     }
 }
