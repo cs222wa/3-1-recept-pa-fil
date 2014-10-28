@@ -130,17 +130,81 @@ namespace FiledRecipes.Domain
 
         public virtual void Load()
         {
-            //List<string> loadRecipes = new List<string>();
+            //RecipeRepository bestämmer vilken del som är vad och skriver ut det
 
+            RecipeReadStatus status = RecipeReadStatus.Indefinite; 
+
+            List<IRecipe> recipeList = new List<IRecipe>();
             try
             {
-                using (StreamReader reader = new StreamReader("App_Data\\Recipes.txt"))
+                using (StreamReader reader = new StreamReader(_path))
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
-                        //loadRecipes.Add(line);
-                        Console.WriteLine(line);
+                        if (line == "")
+                        {
+                            continue;
+                        }
+                        if (line == SectionRecipe)
+                        {
+                            status = RecipeReadStatus.New;
+                        }
+                        else if (line == SectionIngredients)
+                        {
+                            status = RecipeReadStatus.Ingredient;
+                        }
+                        else if (line == SectionInstructions)
+                        {
+                            status = RecipeReadStatus.Ingredient;
+                        }
+                        else
+                        {
+                            if (status == RecipeReadStatus.New)
+                            {
+                                Recipe newRecipe = new Recipe(line);
+                                //nytt recept-objekt med receptets namn (skicka med line som argument till objektets egenskap Name?)
+                            }
+                            else if (status == RecipeReadStatus.Ingredient)
+                            {
+                                 string[] parts = line.Split(';');
+                                //{
+                                //Console.WriteLine("{0}:{1}:{2}",part);  //Skriver ut de olika delarna
+                                //}
+
+                                //1. Dela upp raden i delar genom att använda metoden Split() i klassen 
+                                //String. De olika delarna separeras åt med semikolon varför det 
+                                //alltid ska bli tre delar.
+
+                               
+                                if ((line.Split(';') % 3) != 0)  //hur skriva???
+                                {
+                                    throw new FileFormatException();
+                                }
+                                //2. Om antalet delar inte är tre…
+                                //a. …är något fel varför ett undantag av typen 
+                                //FileFormatException ska kastas.
+
+                                
+                                
+                                Ingredient newingredient = new Ingredient(parts[0], parts[1], parts[2]);  //Hur skicka med olika delarna??
+                                //3. Skapa ett ingrediensobjekt och initiera det med de tre delarna för 
+                                //mängd, mått och namn.
+                                
+
+                                //4. Lägg till ingrediensen till receptets lista med ingredienser.
+                            }
+                            else if (status == RecipeReadStatus.Instruction)
+                            {
+                                //1. Lägg till raden till receptets lista med instruktioner.
+                            }
+                            else
+                            {
+                                throw new FileFormatException();
+                               //1. …är något fel varför ett undantag av typen FileFormatException
+                               //ska kastas.
+                            }
+                        }
                     }
                 }
             }
@@ -156,3 +220,36 @@ namespace FiledRecipes.Domain
         }
     }
 }
+
+
+
+
+//Hämta recept
+//Recept ska läsas in från textfilen recipes.txt. Väljer användaren menyalternativet ’1.Öppna’ ska 
+//applikationen öppna textfilen, läsa och tolka den rad för rad för att skapa en lista med recept som 
+//användaren sedan ska kunna välja att via menykommandon hantera på olika sätt.
+
+//Spara recept
+//Recept ska sparas permanent i textfilen recipes.txt. Väljer användaren menyalternativet 
+//’2. Spara’ ska applikationen öppna textfilen och skriva recepten rad för rad till textfilen. Finns redan 
+//textfilen ska den skrivas över.
+
+//Visa recept
+//Då användaren väljer menykommandot ’4. Visa recept.’ ska en lista med samtliga recepts namn 
+//presenteras varefter användaren väljer det recept som ska visas
+
+//Visa alla recept
+//Då användaren väljer menykommandot ’5. Visa alla recept.’ ska alla recept visas sorterade 
+//efter receptens namn.
+//Bara ett recept åt gången ska visas och användaren ska trycka på en tangent för att visa nästa recept. 
+//Efter att recepten visats ska användaren kunna trycka på en tangent för att återvända till menyn.
+
+
+
+//////RecipeView header = new RecipeView();
+//////    header = reader.Name;
+//////Console.WriteLine(header);
+
+////Console.WriteLine(SectionRecipe);
+//////string[] values = line.Split(',', ' ');
+//////loadRecipes.AddRange(values);
