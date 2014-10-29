@@ -139,7 +139,8 @@ namespace FiledRecipes.Domain
             {
                 using (StreamReader reader = new StreamReader(_path))
                 {
-                    string line;
+                    string line = reader.ReadLine(); 
+                    Recipe newRecipe = new Recipe(line);
                     while ((line = reader.ReadLine()) != null)
                     {
                         if (line == "")
@@ -162,22 +163,29 @@ namespace FiledRecipes.Domain
                         {
                             if (status == RecipeReadStatus.New)
                             {
-                                Recipe newRecipe = new Recipe(line);
-                                //nytt recept-objekt med receptets namn (skicka med line som argument till objektets egenskap Name?)
+                                recipeList.Add(newRecipe);
+                                
+                                //nytt recept-objekt läggs till i listan över recept.
                             }
                             else if (status == RecipeReadStatus.Ingredient)
                             {
-                                 string[] parts = line.Split(';');
-                                //{
-                                //Console.WriteLine("{0}:{1}:{2}",part);  //Skriver ut de olika delarna
-                                //}
+                               
+                                string[] parts = line.Split(new char[] {';', ' '});
 
+                                Ingredient newingredient = new Ingredient
+                                {
+                                    Amount = parts[0],
+                                    Measure = parts[1],
+                                    Name = parts[2]
+
+                                };
+                                 
                                 //1. Dela upp raden i delar genom att använda metoden Split() i klassen 
                                 //String. De olika delarna separeras åt med semikolon varför det 
                                 //alltid ska bli tre delar.
 
                                
-                                if ((line.Split(';') % 3) != 0)  //hur skriva???
+                                if (line.Length != 3)
                                 {
                                     throw new FileFormatException();
                                 }
@@ -186,16 +194,18 @@ namespace FiledRecipes.Domain
                                 //FileFormatException ska kastas.
 
                                 
-                                
-                                Ingredient newingredient = new Ingredient(parts[0], parts[1], parts[2]);  //Hur skicka med olika delarna??
+                                Ingredient newIngredient = new Ingredient();  //Hur skicka med olika delarna??
                                 //3. Skapa ett ingrediensobjekt och initiera det med de tre delarna för 
                                 //mängd, mått och namn.
-                                
 
+                              
+                                newRecipe.Add(newIngredient);
+                                
                                 //4. Lägg till ingrediensen till receptets lista med ingredienser.
                             }
                             else if (status == RecipeReadStatus.Instruction)
                             {
+                                newRecipe.Add(line);    
                                 //1. Lägg till raden till receptets lista med instruktioner.
                             }
                             else
@@ -206,6 +216,24 @@ namespace FiledRecipes.Domain
                             }
                         }
                     }
+                    recipeList.TrimExcess();
+                    recipeList.Sort();
+
+                    //Sortera listan med recept med avseende på receptens nam
+
+
+                    _recipes = recipeList;
+                    //Tilldela avsett fält i klassen, _recipes, en referens till listan. (????)
+
+
+                    IsModified = true;
+                    //Tilldela avsedd egenskap i klassen, IsModified, ett värde som indikerar att listan med recept 
+                    //är oförändrad           
+
+
+                    OnRecipesChanged(EventArgs.Empty);
+                    //Utlös händelse om att recept har lästs in genom att anropa metoden OnRecipesChanged och 
+                    //skicka med parametern EventArgs.Empty.
                 }
             }
             catch (Exception ex)
