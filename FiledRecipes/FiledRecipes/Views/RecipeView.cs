@@ -14,43 +14,43 @@ namespace FiledRecipes.Views
     {
         public void Show(IRecipe recipe)
         {
-            foreach (var header in recipe.Name)
-            {
-                Header = recipe.Name;
-                ShowHeaderPanel();
-                //// Retrieve Recipe name
-            }
+            Header = recipe.Name;
+            ShowHeaderPanel();
+            //// Retrieve Recipe name
+
+            List<IIngredient> ingredients = new List<IIngredient>(recipe.Ingredients);
+            List<string> instructions = new List<string>(recipe.Instructions);
+            //Create new local lists with references to the saved list
+            //containing ingredients and instruktions.
+
             Console.WriteLine();
-            Console.WriteLine("Ingredienser");
+            Console.WriteLine("Du behöver följande:");
             Console.WriteLine("_______________________________");
-            foreach (var ingredients in recipe.Ingredients)
+            foreach (var ingredientRows in ingredients)
             {
-                Console.WriteLine(ingredients);
+                Console.WriteLine(ingredientRows);
+                //Display list of Ingredients.
             }
 
             Console.WriteLine();
-            Console.WriteLine("Instruktioner:");
+            Console.WriteLine("Så här gör du:");
             Console.WriteLine("_______________________________");
-            foreach (var instructions in recipe.Instructions)
+            foreach (var instructionRows in instructions)
             {
-                Console.WriteLine(instructions);
+                Console.WriteLine(instructionRows);
+                //Display list of instructions.
             }
-
-            //Dis plays one recipe 
+            //Displays one recipe 
         }
 
         public void Show(IEnumerable<IRecipe> recipes)
         {
-        //     
-        //        //show one recipe at a time.
-        //        foreach (var recipeToShow in recipes)
-        //        {
-        //            Show(recipeToShow);
-        //            ContinueOnKeyPressed();
-        //        }
-        //
-            
-            //Displays the list of recipes
+            foreach (var recipeToShow in recipes)
+            {
+                Show(recipeToShow);
+                ContinueOnKeyPressed();
+            }
+            //Displays full recipes, one at a time.
         }
     }
 }
@@ -65,6 +65,8 @@ namespace FiledRecipes.Views
 //efter receptens namn.
 //Bara ett recept åt gången ska visas och användaren ska trycka på en tangent för att visa nästa recept. 
 //Efter att recepten visats ska användaren kunna trycka på en tangent för att återvända till menyn.
+
+
 
 
 
