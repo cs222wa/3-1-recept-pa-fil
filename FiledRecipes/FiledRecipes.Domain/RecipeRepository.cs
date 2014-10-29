@@ -128,6 +128,13 @@ namespace FiledRecipes.Domain
             }
         }
 
+        /// <summary>
+        /// //Hämta recept
+        ///Recept ska läsas in från textfilen recipes.txt. Väljer användaren menyalternativet ’1.Öppna’ ska 
+        ///applikationen öppna textfilen, läsa och tolka den rad för rad för att skapa en lista med recept som 
+        ///användaren sedan ska kunna välja att via menykommandon hantera på olika sätt.
+
+        /// </summary>
         public virtual void Load()
         {
             //RecipeRepository decides which part is what and writes it out.
@@ -197,54 +204,68 @@ namespace FiledRecipes.Domain
                         {
                             throw new FileFormatException();
                             //If else - something is wrong and a new exceptoin of the type FileFormatException will be thrown.
-
                         }
-                    }
-
-                    recipeList.TrimExcess();
-                    recipeList.Sort();
-                    //Sort the list with recipes according to the Names of the recipes.
-
-                    _recipes = recipeList;
-                    //Assign the field _recipes, in the class, a refrence to the list.
-
-                    IsModified = false;
-                    //Assign the property IsModified, in the class, a value which indicates that the list of recipes is unchanged.
-
-                    OnRecipesChanged(EventArgs.Empty);
-                    //Advertise that the recipes has been loaded by calling the method OnRecipesChanged and send it the parameter EventArgs.Empty.
+                    } 
                 }
+                recipeList.TrimExcess();
+                recipeList.Sort();
+                //Sort the list with recipes according to the Names of the recipes.
+
+                _recipes = recipeList;
+                //Assign the field _recipes, in the class, a refrence to the list.
+
+                IsModified = false;
+                //Assign the property IsModified, in the class, a value which indicates that the list of recipes is unchanged.
+
+                OnRecipesChanged(EventArgs.Empty);
+                //Advertise that the recipes has been loaded by calling the method OnRecipesChanged and send it the parameter EventArgs.Empty.
             }
         }
 
+        /// <summary>
+        ///Spara recept
+        ///Recept ska sparas permanent i textfilen recipes.txt. Väljer användaren menyalternativet 
+        ///’2. Spara’ ska applikationen öppna textfilen och skriva recepten rad för rad till textfilen. Finns redan 
+        ///textfilen ska den skrivas över.
+        /// </summary>
         public virtual void Save()
         {
-            
+
+//            Öppna filen för att skriva StreamWriter är det du kan använda för detta (titta på parametern append, den gör något som du ska göra enligt specen)
+
+//2.       Efter du har öppnat en writer, gå igenom _recipes med en foreach loop för att hämta ut varje recept
+
+//3.       För varje recept:
+
+//a.       Skriv ut recipe.Name med en header av typ SectionRecipe
+
+//b.      Skriv ut SectionIngredients
+
+//c.       För varje element i recipe.Ingredients
+
+//                                                               i.      Använd string.Format för att skapa en ; separerat sträng av de olika egenskapene av Ingredient.
+
+//d.      Skriv ut SectionInstructions
+
+//e.      För varje string i recipe.Instructions skriv de rakt ut.
+
+ 
+
+//Och mer än det behöver du inte göra, när StreamWriter går ut av scope (du måste göra som du gör med StreamReader och använda using)
+            //Close/Dispose/Flush behöver du inte göra, när StreamWriter går ut av scope (dvs using), så görs det automatiskt
         }
     }
 }
 
 
 
+//Determines whether data is to be appended to the file. If the file exists and append is false, the file is overwritten. If the file exists and append is true, the data is appended to the file. Otherwise, a new file is created.
+//[20:31:04] Rune G: I dokumentet så står det att varje gång man kör Save, så ska filen bli överskrivit
 
-//Hämta recept
-//Recept ska läsas in från textfilen recipes.txt. Väljer användaren menyalternativet ’1.Öppna’ ska 
-//applikationen öppna textfilen, läsa och tolka den rad för rad för att skapa en lista med recept som 
-//användaren sedan ska kunna välja att via menykommandon hantera på olika sätt.
 
-//Spara recept
-//Recept ska sparas permanent i textfilen recipes.txt. Väljer användaren menyalternativet 
-//’2. Spara’ ska applikationen öppna textfilen och skriva recepten rad för rad till textfilen. Finns redan 
-//textfilen ska den skrivas över.
 
-//Visa recept
-//Då användaren väljer menykommandot ’4. Visa recept.’ ska en lista med samtliga recepts namn 
-//presenteras varefter användaren väljer det recept som ska visas
 
-//Visa alla recept
-//Då användaren väljer menykommandot ’5. Visa alla recept.’ ska alla recept visas sorterade 
-//efter receptens namn.
-//Bara ett recept åt gången ska visas och användaren ska trycka på en tangent för att visa nästa recept. 
-//Efter att recepten visats ska användaren kunna trycka på en tangent för att återvända till menyn.
+
+
 
 
