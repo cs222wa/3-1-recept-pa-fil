@@ -230,42 +230,30 @@ namespace FiledRecipes.Domain
         /// </summary>
         public virtual void Save()
         {
+            // Öppna filen för att skriva. StreamWriter är det du kan använda för detta (titta på parametern append, den gör något som du ska göra enligt specen)
 
-//            Öppna filen för att skriva StreamWriter är det du kan använda för detta (titta på parametern append, den gör något som du ska göra enligt specen)
+            //Append
+            //Determines whether data is to be appended to the file. 
+            //If the file exists and append is false, the file is overwritten. 
+            //If the file exists and append is true, the data is appended to the file. 
+            //Otherwise, a new file is created.
 
-//2.       Efter du har öppnat en writer, gå igenom _recipes med en foreach loop för att hämta ut varje recept
+            //I dokumentet så står det att varje gång man kör Save, så ska filen bli överskrivit
+             using (StreamWriter writer = new StreamWriter(_path, false))
+             {
+                 foreach (var recipe in _recipes)   //loopa listan med recept(_recipes?) för att hämta ut varje recept
+                 { 
+                     Console.WriteLine(SectionRecipe);  //Skriv varje receptes namn (header)
 
-//3.       För varje recept:
+                     Console.WriteLine(String.Format("{;}", SectionIngredients)); 
+                     //Skriv varje recepts ingredienser (header)
+                     //Använd string.Format för att skriva ut och dela upp de olika ingredienserna vid varje ";".
 
-//a.       Skriv ut recipe.Name med en header av typ SectionRecipe
-
-//b.      Skriv ut SectionIngredients
-
-//c.       För varje element i recipe.Ingredients
-
-//                                                               i.      Använd string.Format för att skapa en ; separerat sträng av de olika egenskapene av Ingredient.
-
-//d.      Skriv ut SectionInstructions
-
-//e.      För varje string i recipe.Instructions skriv de rakt ut.
-
- 
-
-//Och mer än det behöver du inte göra, när StreamWriter går ut av scope (du måste göra som du gör med StreamReader och använda using)
-            //Close/Dispose/Flush behöver du inte göra, när StreamWriter går ut av scope (dvs using), så görs det automatiskt
+                     Console.WriteLine(SectionInstructions); //Skriv varje recepts instruktioner (header)
+                      
+                     Console.WriteLine(recipe.Instructions);  //Skriv ut de rader för instruktioner som finns lagrade i listan.
+                 }
+             }
         }
     }
 }
-
-
-
-//Determines whether data is to be appended to the file. If the file exists and append is false, the file is overwritten. If the file exists and append is true, the data is appended to the file. Otherwise, a new file is created.
-//[20:31:04] Rune G: I dokumentet så står det att varje gång man kör Save, så ska filen bli överskrivit
-
-
-
-
-
-
-
-
