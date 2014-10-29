@@ -130,121 +130,96 @@ namespace FiledRecipes.Domain
 
         public virtual void Load()
         {
-            //RecipeRepository bestämmer vilken del som är vad och skriver ut det
+            //RecipeRepository decides which part is what and writes it out.
 
             RecipeReadStatus status = RecipeReadStatus.Indefinite; 
 
             List<IRecipe> recipeList = new List<IRecipe>();
-            try
+
+            using (StreamReader reader = new StreamReader(_path))
             {
-                using (StreamReader reader = new StreamReader(_path))
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    string line = reader.ReadLine(); 
-                    Recipe newRecipe = new Recipe(line);
-                    while ((line = reader.ReadLine()) != null)
+                    if (line == "")
                     {
-                        if (line == "")
+                        continue;
+                    }
+                    if (line == SectionRecipe)
+                    {
+                        status = RecipeReadStatus.New;
+                    }
+                    else if (line == SectionIngredients)
+                    {
+                        status = RecipeReadStatus.Ingredient;
+                    }
+                    else if (line == SectionInstructions)
+                    {
+                        status = RecipeReadStatus.Instruction;
+                    }
+                    else
+                    {
+                        if (status == RecipeReadStatus.New)
                         {
-                            continue;
+                            recipeList.Add(new Recipe(line));
+
+                            //new recipe object is added to the list of recipes.
+
                         }
-                        if (line == SectionRecipe)
+                        else if (status == RecipeReadStatus.Ingredient)
                         {
-                            status = RecipeReadStatus.New;
+
+                            string[] parts = line.Split(new char[] { ';' });
+                            //Divide the line into 3 sections by using the method Split() in the String class.
+
+                            if (parts.Length != 3)
+                            {
+                                throw new FileFormatException();
+                            }
+                            //If the number of sections are not three, throw new FileFormatException.
+
+                            Ingredient newIngredient = new Ingredient();
+                            newIngredient.Amount = parts[0];
+                            newIngredient.Measure = parts[1];
+                            newIngredient.Name = parts[2];
+                            //Create an ingredient object and initiate it with the three sections for Measure, Amount and Name.
+
+                            recipeList.Last().Add(newIngredient);
+                            //Add the ingredient to the recipes' list of ingredients.
+
                         }
-                        else if (line == SectionIngredients)
+                        else if (status == RecipeReadStatus.Instruction)
                         {
-                            status = RecipeReadStatus.Ingredient;
-                        }
-                        else if (line == SectionInstructions)
-                        {
-                            status = RecipeReadStatus.Ingredient;
+                            recipeList.Last().Add(line);
+                            //Add the line to the recipes' list of instructions.
                         }
                         else
                         {
-                            if (status == RecipeReadStatus.New)
-                            {
-                                recipeList.Add(newRecipe);
-                                
-                                //nytt recept-objekt läggs till i listan över recept.
-                            }
-                            else if (status == RecipeReadStatus.Ingredient)
-                            {
-                               
-                                string[] parts = line.Split(new char[] {';', ' '});
+                            throw new FileFormatException();
+                            //If else - something is wrong and a new exceptoin of the type FileFormatException will be thrown.
 
-                                Ingredient newingredient = new Ingredient
-                                {
-                                    Amount = parts[0],
-                                    Measure = parts[1],
-                                    Name = parts[2]
-
-                                };
-                                 
-                                //1. Dela upp raden i delar genom att använda metoden Split() i klassen 
-                                //String. De olika delarna separeras åt med semikolon varför det 
-                                //alltid ska bli tre delar.
-
-                               
-                                if (line.Length != 3)
-                                {
-                                    throw new FileFormatException();
-                                }
-                                //2. Om antalet delar inte är tre…
-                                //a. …är något fel varför ett undantag av typen 
-                                //FileFormatException ska kastas.
-
-                                
-                                Ingredient newIngredient = new Ingredient();  //Hur skicka med olika delarna??
-                                //3. Skapa ett ingrediensobjekt och initiera det med de tre delarna för 
-                                //mängd, mått och namn.
-
-                              
-                                newRecipe.Add(newIngredient);
-                                
-                                //4. Lägg till ingrediensen till receptets lista med ingredienser.
-                            }
-                            else if (status == RecipeReadStatus.Instruction)
-                            {
-                                newRecipe.Add(line);    
-                                //1. Lägg till raden till receptets lista med instruktioner.
-                            }
-                            else
-                            {
-                                throw new FileFormatException();
-                               //1. …är något fel varför ett undantag av typen FileFormatException
-                               //ska kastas.
-                            }
                         }
                     }
+
                     recipeList.TrimExcess();
                     recipeList.Sort();
-
-                    //Sortera listan med recept med avseende på receptens nam
-
+                    //Sort the list with recipes according to the Names of the recipes.
 
                     _recipes = recipeList;
-                    //Tilldela avsett fält i klassen, _recipes, en referens till listan. (????)
+                    //Assign the field _recipes, in the class, a refrence to the list.
 
-
-                    IsModified = true;
-                    //Tilldela avsedd egenskap i klassen, IsModified, ett värde som indikerar att listan med recept 
-                    //är oförändrad           
-
+                    IsModified = false;
+                    //Assign the property IsModified, in the class, a value which indicates that the list of recipes is unchanged.
 
                     OnRecipesChanged(EventArgs.Empty);
-                    //Utlös händelse om att recept har lästs in genom att anropa metoden OnRecipesChanged och 
-                    //skicka med parametern EventArgs.Empty.
+                    //Advertise that the recipes has been loaded by calling the method OnRecipesChanged and send it the parameter EventArgs.Empty.
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
         }
 
         public virtual void Save()
         {
-
+            
         }
     }
 }
@@ -273,11 +248,3 @@ namespace FiledRecipes.Domain
 //Efter att recepten visats ska användaren kunna trycka på en tangent för att återvända till menyn.
 
 
-
-//////RecipeView header = new RecipeView();
-//////    header = reader.Name;
-//////Console.WriteLine(header);
-
-////Console.WriteLine(SectionRecipe);
-//////string[] values = line.Split(',', ' ');
-//////loadRecipes.AddRange(values);

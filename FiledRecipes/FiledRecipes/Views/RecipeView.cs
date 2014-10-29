@@ -14,19 +14,57 @@ namespace FiledRecipes.Views
     {
         public void Show(IRecipe recipe)
         {
-            //Anropa metoder som redan finns?
-            //Visar upp hela receptet
+            foreach (var header in recipe.Name)
+            {
+                Header = recipe.Name;
+                ShowHeaderPanel();
+                //// Retrieve Recipe name
+            }
+            Console.WriteLine();
+            Console.WriteLine("Ingredienser");
+            Console.WriteLine("_______________________________");
+            foreach (var ingredients in recipe.Ingredients)
+            {
+                Console.WriteLine(ingredients);
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Instruktioner:");
+            Console.WriteLine("_______________________________");
+            foreach (var instructions in recipe.Instructions)
+            {
+                Console.WriteLine(instructions);
+            }
+
+            //Dis plays one recipe 
         }
 
         public void Show(IEnumerable<IRecipe> recipes)
         {
-            //Anropa metoder som redan finns?
+        //     
+        //        //show one recipe at a time.
+        //        foreach (var recipeToShow in recipes)
+        //        {
+        //            Show(recipeToShow);
+        //            ContinueOnKeyPressed();
+        //        }
+        //
+            
+            //Displays the list of recipes
         }
     }
 }
 
 
-//jag har gjort två olika Shows i RecipeView
-//[15:39:26] Maria Sjöberg: den ena ska vara fulla receptet
-//[15:39:30] Maria Sjöberg: den andra är sjkälva menyn
-//[15:39:37] Maria Sjöberg: listan med recept
+//Visa recept
+//Då användaren väljer menykommandot ’4. Visa recept.’ ska en lista med samtliga recepts namn 
+//presenteras varefter användaren väljer det recept som ska visas
+
+//Visa alla recept
+//Då användaren väljer menykommandot ’5. Visa alla recept.’ ska alla recept visas sorterade 
+//efter receptens namn.
+//Bara ett recept åt gången ska visas och användaren ska trycka på en tangent för att visa nästa recept. 
+//Efter att recepten visats ska användaren kunna trycka på en tangent för att återvända till menyn.
+
+
+
