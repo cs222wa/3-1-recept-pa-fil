@@ -129,17 +129,16 @@ namespace FiledRecipes.Domain
         }
 
         /// <summary>
-        /// //Hämta recept
-        ///Recept ska läsas in från textfilen recipes.txt. Väljer användaren menyalternativet ’1.Öppna’ ska 
-        ///applikationen öppna textfilen, läsa och tolka den rad för rad för att skapa en lista med recept som 
-        ///användaren sedan ska kunna välja att via menykommandon hantera på olika sätt.
-
+        /// Load recipes.
+        /// Recipes are loaded from the textfile recipes.txt.
+        /// When the user selects "1. Open" in the menu, the application will open the textfile, read and translate
+        /// it row by row to create a list of reipes which the user is going to be able to select through the menu.
         /// </summary>
         public virtual void Load()
         {
             //RecipeRepository decides which part is what and writes it out.
 
-            RecipeReadStatus status = RecipeReadStatus.Indefinite; 
+            RecipeReadStatus status = RecipeReadStatus.Indefinite;
 
             List<IRecipe> recipeList = new List<IRecipe>();
 
@@ -205,7 +204,7 @@ namespace FiledRecipes.Domain
                             throw new FileFormatException();
                             //If else - something is wrong and a new exceptoin of the type FileFormatException will be thrown.
                         }
-                    } 
+                    }
                 }
                 recipeList.TrimExcess();
                 recipeList.Sort();
@@ -223,37 +222,45 @@ namespace FiledRecipes.Domain
         }
 
         /// <summary>
-        ///Spara recept
-        ///Recept ska sparas permanent i textfilen recipes.txt. Väljer användaren menyalternativet 
-        ///’2. Spara’ ska applikationen öppna textfilen och skriva recepten rad för rad till textfilen. Finns redan 
-        ///textfilen ska den skrivas över.
+        /// Save recipe
+        /// Recipes are saved permanently in the textfile recipes.txt.
+        /// If the user selects "2. Save" in the menu, the application is going to open the textfile
+        /// and write the recipes row by row to the textfile.
+        /// If the textfile already exists it shall be overwritten.
         /// </summary>
         public virtual void Save()
         {
-            // Öppna filen för att skriva. StreamWriter är det du kan använda för detta (titta på parametern append, den gör något som du ska göra enligt specen)
+            using (StreamWriter writer = new StreamWriter(_path, false))
+            //Create a new StreamWriter object, set it to overwrite already existing object in selected the path.
+            {
+                foreach (var recipe in _recipes)   //loop through the list of recipes(_recipes) to retrieve each recipe.
+                {
+                    writer.WriteLine(SectionRecipe);  //Write the header of the section.
+                    writer.WriteLine(recipe.Name);     //Write the name of the recipe
 
-            //Append
-            //Determines whether data is to be appended to the file. 
-            //If the file exists and append is false, the file is overwritten. 
-            //If the file exists and append is true, the data is appended to the file. 
-            //Otherwise, a new file is created.
+                    foreach (var ingredients in _recipes) //loop through the ingredients in _recipes.
+                    {
+                        writer.WriteLine(SectionIngredients);  //Write the header of the ingredients.
 
-            //I dokumentet så står det att varje gång man kör Save, så ska filen bli överskrivit
-             using (StreamWriter writer = new StreamWriter(_path, false))
-             {
-                 foreach (var recipe in _recipes)   //loopa listan med recept(_recipes?) för att hämta ut varje recept
-                 { 
-                     Console.WriteLine(SectionRecipe);  //Skriv varje receptes namn (header)
+                        foreach (var elements in _recipes) //Loop through the ingredients and write the Amount, Measure and Name for each ingredient.
+                        {
+                            writer.ToString();
+                            //writer.WriteLine(String.Format("{;}", IIngredient.Amount));
+                            //writer.WriteLine(String.Format("{;}", ingredient.Measure));
+                            //writer.WriteLine(String.Format("{;}", ingredient.Name));
+                        }
+                    }
 
-                     Console.WriteLine(String.Format("{;}", SectionIngredients)); 
-                     //Skriv varje recepts ingredienser (header)
-                     //Använd string.Format för att skriva ut och dela upp de olika ingredienserna vid varje ";".
+                    foreach (var instructions in _recipes) //Loop through the instructions in _recipes.
+                    {
+                        writer.WriteLine(SectionInstructions); //Write the header for the instructions.
 
-                     Console.WriteLine(SectionInstructions); //Skriv varje recepts instruktioner (header)
-                      
-                     Console.WriteLine(recipe.Instructions);  //Skriv ut de rader för instruktioner som finns lagrade i listan.
-                 }
-             }
+                        writer.WriteLine(recipe.Instructions);  //Write the rows of instructions that are stored in the list.
+                    }
+                }
+            }
+            IsModified = false;                    //Notify the method IsModified that the list of recipes has been changed.
+            OnRecipesChanged(EventArgs.Empty);     //Notify that the recipes has been changed by sending OnRecipesChanged the parameter EventArgs.Empty
         }
     }
 }

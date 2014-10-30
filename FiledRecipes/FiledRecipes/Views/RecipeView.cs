@@ -13,9 +13,9 @@ namespace FiledRecipes.Views
     public class RecipeView : ViewBase, IRecipeView
     {
         /// <summary>
-        /// //Visa recept
-        ///Då användaren väljer menykommandot ’4. Visa recept.’ ska en lista med samtliga recepts namn 
-        ///presenteras varefter användaren väljer det recept som ska visas
+        /// Show recipe
+        /// When the user selects 4 in the menu ("Show recipe"), a list of all recipe names will
+        /// be presented. The user will then select which recipe to view.
         /// </summary>
         /// <param name="recipe"></param>
         public void Show(IRecipe recipe)
@@ -24,15 +24,10 @@ namespace FiledRecipes.Views
             ShowHeaderPanel();
             //// Retrieve Recipe name
 
-            //List<IIngredient> ingredients = new List<IIngredient>(recipe.Ingredients);
-            //List<string> instructions = new List<string>(recipe.Instructions);
-            //Create new local lists with references to the saved list
-            //containing ingredients and instruktions.
-
             Console.WriteLine();
             Console.WriteLine("Du behöver följande:");
             Console.WriteLine("_______________________________");
-            foreach (var ingredientRows in recipe.Ingredients)
+            foreach (var ingredientRows in recipe.Ingredients)          
             {
                 Console.WriteLine(ingredientRows);
                 //Display list of Ingredients.
@@ -50,12 +45,11 @@ namespace FiledRecipes.Views
         }
 
         /// <summary>
-        /// 
-        ///Visa alla recept
-        ///Då användaren väljer menykommandot ’5. Visa alla recept.’ ska alla recept visas sorterade 
-        ///efter receptens namn.
-        ///Bara ett recept åt gången ska visas och användaren ska trycka på en tangent för att visa nästa recept. 
-        ///Efter att recepten visats ska användaren kunna trycka på en tangent för att återvända till menyn.
+        /// Show all recipes.
+        /// When the user selects 5 in the menu ("Show all recipes"), all recipes will be displays
+        /// sorted by the recipe names.
+        /// Only one recipe at a time will be displayed and the user presses a key to show the following one.
+        /// After the recipes has been shown, the user should be able to press a key to return to the menu.
         /// </summary>
         /// <param name="recipes"></param>
         public void Show(IEnumerable<IRecipe> recipes)
