@@ -136,30 +136,26 @@ namespace FiledRecipes.Domain
         /// </summary>
         public virtual void Load()
         {
-            //RecipeRepository decides which part is what and writes it out.
-
             RecipeReadStatus status = RecipeReadStatus.Indefinite;
-
-            List<IRecipe> recipeList = new List<IRecipe>();
-
-            using (StreamReader reader = new StreamReader(_path))
+            List<IRecipe> recipeList = new List<IRecipe>();         //Create a new list
+            using (StreamReader reader = new StreamReader(_path))   //Use a Streamreader object to read from file
             {
                 string line;
-                while ((line = reader.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null)      //Loop through the rows of the text until the end of file
                 {
-                    if (line == "")
+                    if (line == "")             //If row is empty, continue to next row.
                     {
                         continue;
                     }
-                    if (line == SectionRecipe)
+                    if (line == SectionRecipe)      //If line is equal to the value of SectionRecipe, create e new Recipe for the next line.
                     {
                         status = RecipeReadStatus.New;
                     }
-                    else if (line == SectionIngredients)
+                    else if (line == SectionIngredients)       //If line is equal to the vlue of SectionIngredients, create a new ingredient from next line.
                     {
                         status = RecipeReadStatus.Ingredient;
                     }
-                    else if (line == SectionInstructions)
+                    else if (line == SectionInstructions)      //If line is equal to the value of SectionInstructions, create new instruction from next line.
                     {
                         status = RecipeReadStatus.Instruction;
                     }
@@ -167,55 +163,39 @@ namespace FiledRecipes.Domain
                     {
                         if (status == RecipeReadStatus.New)
                         {
-                            recipeList.Add(new Recipe(line));
-
-                            //new recipe object is added to the list of recipes.
-
+                            recipeList.Add(new Recipe(line));       //new recipe object is added to the list of recipes.
                         }
                         else if (status == RecipeReadStatus.Ingredient)
                         {
-
-                            string[] parts = line.Split(new char[] { ';' });
-                            //Divide the line into 3 sections by using the method Split() in the String class.
-
+                            string[] parts = line.Split(new char[] { ';' });    //Divide the line into 3 sections by using the method Split() in the String class.
                             if (parts.Length != 3)
                             {
-                                throw new FileFormatException();
+                                throw new FileFormatException();    //If the number of sections are not three, throw new FileFormatException.
                             }
-                            //If the number of sections are not three, throw new FileFormatException.
-
                             Ingredient newIngredient = new Ingredient();
                             newIngredient.Amount = parts[0];
                             newIngredient.Measure = parts[1];
                             newIngredient.Name = parts[2];
                             //Create an ingredient object and initiate it with the three sections for Measure, Amount and Name.
-
-                            recipeList.Last().Add(newIngredient);
-                            //Add the ingredient to the recipes' list of ingredients.
-
+                            recipeList.Last().Add(newIngredient);   //Add the ingredient to the recipes' list of ingredients.
                         }
                         else if (status == RecipeReadStatus.Instruction)
                         {
-                            recipeList.Last().Add(line);
-                            //Add the line to the recipes' list of instructions.
+                            recipeList.Last().Add(line);            //Add the line to the recipes' list of instructions.
                         }
                         else
                         {
-                            throw new FileFormatException();
-                            //If else - something is wrong and a new exceptoin of the type FileFormatException will be thrown.
+                            throw new FileFormatException();        //If else - something is wrong and a new exceptoin of the type FileFormatException will be thrown.
                         }
                     }
                 }
                 recipeList.TrimExcess();
                 recipeList.Sort();
                 //Sort the list with recipes according to the Names of the recipes.
-
                 _recipes = recipeList;
                 //Assign the field _recipes, in the class, a refrence to the list.
-
                 IsModified = false;
                 //Assign the property IsModified, in the class, a value which indicates that the list of recipes is unchanged.
-
                 OnRecipesChanged(EventArgs.Empty);
                 //Advertise that the recipes has been loaded by calling the method OnRecipesChanged and send it the parameter EventArgs.Empty.
             }
@@ -233,29 +213,20 @@ namespace FiledRecipes.Domain
             using (StreamWriter writer = new StreamWriter(_path, false))
             //Create a new StreamWriter object, set it to overwrite already existing object in selected the path.
             {
-                foreach (var recipe in _recipes)   //loop through the list of recipes(_recipes) to retrieve each recipe.
+                foreach (var recipe in _recipes)                        //loop through the list of recipes(_recipes) to retrieve each recipe.
                 {
-                    writer.WriteLine(SectionRecipe);  //Write the header of the section.
-                    writer.WriteLine(recipe.Name);     //Write the name of the recipe
+                    writer.WriteLine(SectionRecipe);                    //Write the header of the section.
+                    writer.WriteLine(recipe.Name);                      //Write the name of the recipe
 
-                    foreach (var ingredients in _recipes) //loop through the ingredients in _recipes.
+                    writer.WriteLine(SectionIngredients);  //Write the header of the ingredients.
+                    foreach (var ingredient in recipe.Ingredients) //Loop through the ingredients and write the Amount, Measure and Name for each ingredient.
                     {
-                        writer.WriteLine(SectionIngredients);  //Write the header of the ingredients.
-
-                        foreach (var elements in _recipes) //Loop through the ingredients and write the Amount, Measure and Name for each ingredient.
-                        {
-                            writer.ToString();
-                            //writer.WriteLine(String.Format("{;}", IIngredient.Amount));
-                            //writer.WriteLine(String.Format("{;}", ingredient.Measure));
-                            //writer.WriteLine(String.Format("{;}", ingredient.Name));
-                        }
+                        writer.WriteLine("{0};{1};{2}", ingredient.Amount, ingredient.Measure, ingredient.Name);
                     }
-
-                    foreach (var instructions in _recipes) //Loop through the instructions in _recipes.
+                    writer.WriteLine(SectionInstructions);              //Write the header for the instructions.
+                    foreach (var instruction in recipe.Instructions)    //Loop through the instructions in _recipes.
                     {
-                        writer.WriteLine(SectionInstructions); //Write the header for the instructions.
-
-                        writer.WriteLine(recipe.Instructions);  //Write the rows of instructions that are stored in the list.
+                        writer.WriteLine(instruction);                  //Write the rows of instructions that are stored in the list.
                     }
                 }
             }

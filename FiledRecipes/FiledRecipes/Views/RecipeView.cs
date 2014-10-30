@@ -20,26 +20,21 @@ namespace FiledRecipes.Views
         /// <param name="recipe"></param>
         public void Show(IRecipe recipe)
         {
-            Header = recipe.Name;
-            ShowHeaderPanel();
-            //// Retrieve Recipe name
-
+            Header = recipe.Name;  // Retrieve Recipe name
+            ShowHeaderPanel();     //Display Recipe name in panel
             Console.WriteLine();
             Console.WriteLine("Du behöver följande:");
             Console.WriteLine("_______________________________");
-            foreach (var ingredientRows in recipe.Ingredients)          
+            foreach (var ingredientRows in recipe.Ingredients)
             {
-                Console.WriteLine(ingredientRows);
-                //Display list of Ingredients.
+                Console.WriteLine(ingredientRows);      //Display list of Ingredients.
             }
-
             Console.WriteLine();
             Console.WriteLine("Så här gör du:");
             Console.WriteLine("_______________________________");
             foreach (var instructionRows in recipe.Instructions)
             {
-                Console.WriteLine(instructionRows);
-                //Display list of instructions.
+                Console.WriteLine(instructionRows);     //Display list of instructions.
             }
             //Displays one recipe 
         }
@@ -54,9 +49,9 @@ namespace FiledRecipes.Views
         /// <param name="recipes"></param>
         public void Show(IEnumerable<IRecipe> recipes)
         {
-            foreach (var recipeToShow in recipes)
+            foreach (var showRecipe in recipes)  //Loops through all recipes.
             {
-                Show(recipeToShow);
+                Show(showRecipe);                //Displays one recipe.
                 ContinueOnKeyPressed();
             }
             //Displays full recipes, one at a time.
